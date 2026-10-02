@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maynor996.github.io/gemini-3-flash-api/sitemap.xml

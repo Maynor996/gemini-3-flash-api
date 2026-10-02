@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gemini 3 Flash API 国内中转调用指南（2026年最新）｜tryallapi.com</title>
+  <meta name="description" content="Gemini 3 Flash Preview（gemini-3-flash-preview）国内调用指南：官方文本 $0.5/$3、thinking 计入输出、gemini+openai 双端点，tryallapi.com 分组倍率与报错排查。更新于 2026-10-02。" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="author" content="MaynorAI" />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://maynor996.github.io/gemini-3-flash-api/" />
+  <meta property="og:title" content="Gemini 3 Flash API 国内中转调用指南（2026年最新）｜tryallapi.com" />
+  <meta property="og:description" content="Gemini 3 Flash Preview（gemini-3-flash-preview）国内调用指南：官方文本 $0.5/$3、thinking 计入输出、gemini+openai 双端点，tryallapi.com 分组倍率与报错排查。更新于 2026-10-02。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://maynor996.github.io/gemini-3-flash-api/" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="MaynorAI" />
+  <meta property="article:published_time" content="2026-10-02" />
+  <meta property="article:modified_time" content="2026-10-02" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Gemini 3 Flash API 国内中转调用指南（2026年最新）｜tryallapi.com" />
+  <meta name="twitter:description" content="Gemini 3 Flash Preview（gemini-3-flash-preview）国内调用指南：官方文本 $0.5/$3、thinking 计入输出、gemini+openai 双端点，tryallapi.com 分组倍率与报错排查。更新于 2026-10-02。" />
+  <meta name="keywords" content="Gemini 3 Flash API, gemini-3-flash-preview, Gemini Flash 国内调用, Gemini API 中转, Google AI, tryallapi.com, MaynorAI" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/style.css" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Gemini 3 Flash API 国内中转调用指南（2026年最新）",
+      "datePublished": "2026-10-02",
+      "dateModified": "2026-10-02",
+      "author": {
+        "@type": "Person",
+        "name": "MaynorAI"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "tryallapi.com",
+        "url": "https://tryallapi.com/"
+      },
+      "inLanguage": "zh-CN",
+      "description": "Gemini 3 Flash Preview（gemini-3-flash-preview）国内调用指南：官方文本 $0.5/$3、thinking 计入输出、gemini+openai 双端点，tryallapi.com 分组倍率与报错排查。更新于 2026-10-02。",
+      "mainEntityOfPage": "https://maynor996.github.io/gemini-3-flash-api/",
+      "url": "https://maynor996.github.io/gemini-3-flash-api/"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Gemini 3 Flash 的模型 ID 是什么？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "当前 Preview ID 为 gemini-3-flash-preview，以 Google AI 文档为准。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Gemini 3 Flash 官方价格是多少？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "每百万 tokens：文本输入约 $0.50、输出约 $3（含 thinking）、文本缓存约 $0.05 等，以 Gemini Pricing 为准。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "thinking tokens 怎么计费？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "官方说明输出价格包含 thinking tokens；请以控制台 usage 明细为准。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "国内能直连 Google Gemini API 吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "个人与中小团队常因网络与账号限制不稳定，可用 Vertex 或 OpenAI/Gemini 兼容的聚合平台。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "tryallapi.com 支持哪些协议？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "该模型列出 gemini 与 openai 端点；日常 SDK 可优先用 https://tryallapi.com/v1 的 OpenAI 兼容接口。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "tryallapi.com 怎么收费？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "估算约为官方价乘以分组倍率；2026-10-02 取数时分组倍率约 0.15～1.9，以控制台为准。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Flash 和 Pro 怎么选？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Flash 偏成本与速度、适合高并发与预处理；Pro 偏更难任务。用同一评测集对比后选择。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "一个 Key 能同时调 Gemini 和 GPT 吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "可以，在令牌分组权限内可调用多家模型，建议按项目分令牌并设额度上限。"
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow--a" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow--b" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="./">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>Gemini 3 Flash API</span>
+        <span class="brand-sub">MaynorAI</span>
+      </a>
+      <nav class="topbar-links" aria-label="站点导航">
+        <a href="https://tryallapi.com/" target="_blank" rel="noopener noreferrer">tryallapi.com</a>
+        <a href="https://github.com/Maynor996/gemini-3-flash-api#readme">README</a>
+        <a class="btn-gh" href="https://github.com/Maynor996/gemini-3-flash-api" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="article-shell">
+    <div class="wrap">
+      <article class="article">
+        <div class="eyebrow"><span aria-hidden="true">✦</span> Gemini 3 Flash · 国内中转调用指南</div>
+<h1 id="gemini-3-flash-api-国内中转调用指南2026年最新">Gemini 3 Flash API 国内中转调用指南（2026年最新）</h1>
+<blockquote>
+<p>作者：MaynorAI｜首发：2026-10-02｜最后更新：2026-10-02 利益声明：作者运营 tryallapi.com。Google Gemini 参数来自官方文档；tryallapi.com 数据取自公开接口，取数时间 2026-10-02（北京时间），最终以控制台为准。</p>
+</blockquote>
+<p><strong>入口速查：</strong></p>
+<div class="table-scroll"><table>
+<thead>
+<tr class="header">
+<th>渠道类型</th>
+<th>访问网址</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>全模型 API 聚合站</td>
+<td><a href="https://tryallapi.com/" target="_blank" rel="noopener noreferrer">https://tryallapi.com/</a></td>
+<td>适合开发者调用、低延迟直连、多模型一站式接入</td>
+</tr>
+</tbody>
+</table></div>
+<p>本文面向调用 <strong>Gemini API</strong> 的开发者。模型 ID 仍是 Preview 形态：<code>gemini-3-flash-preview</code>。若你需要更强的 Pro 档，可另见本站 Gemini 3.1 Pro 指南。</p>
+<hr />
+<h2 id="gemini-3-flash-preview-信息卡">Gemini 3 Flash Preview 信息卡</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr class="header">
+<th>项目</th>
+<th>内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>模型 ID</td>
+<td><code>gemini-3-flash-preview</code>（Preview）</td>
+<td><a href="https://ai.google.dev/gemini-api/docs/models/gemini-3-flash-preview" target="_blank" rel="noopener noreferrer">Google AI 文档</a></td>
+</tr>
+<tr class="even">
+<td>文档备注</td>
+<td>模型页标注 Latest update：December 2025</td>
+<td>Google AI 文档</td>
+</tr>
+<tr class="odd">
+<td>上下文 / 最大输出</td>
+<td>1,048,576 / 65,536 tokens</td>
+<td>Google AI 文档</td>
+</tr>
+<tr class="even">
+<td>模态</td>
+<td>文本/图像/视频/音频/PDF 输入，文本输出</td>
+<td>Google AI 文档</td>
+</tr>
+<tr class="odd">
+<td>能力摘要</td>
+<td>缓存、代码执行、computer use、file search、函数调用、地图/搜索 grounding、结构化输出、thinking、URL context；无音频生成/图像生成/Live API</td>
+<td>Google AI 文档</td>
+</tr>
+<tr class="even">
+<td>官方价（每百万 tokens）</td>
+<td>文本输入 $0.50；音频输入 $1.00；输出 $3.00；文本缓存 $0.05；音频缓存 $0.10；缓存存储 $1.00 / MTok·小时</td>
+<td><a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener noreferrer">Gemini Pricing</a></td>
+</tr>
+<tr class="odd">
+<td>Thinking</td>
+<td><strong>输出价已含 thinking tokens</strong>；默认 thinking 可能为 HIGH/dynamic——以官方文档为准</td>
+<td>Google AI 文档</td>
+</tr>
+<tr class="even">
+<td>tryallapi.com</td>
+<td><strong>已上架</strong>；端点 <code>gemini</code> + <code>openai</code></td>
+<td><code>/api/pricing</code> 2026-10-02</td>
+</tr>
+<tr class="odd">
+<td>Base URL</td>
+<td>OpenAI 兼容：<code>https://tryallapi.com/v1</code></td>
+<td>tryallapi.com</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>三行结论</strong></p>
+<ol type="1">
+<li>Flash 档主打性价比与多模态输入；Preview ID 可能变更，上线产品请做好模型名可配置。</li>
+<li>Thinking tokens 计入输出侧账单——「看起来输出不长」也可能偏贵，要看 usage 明细。</li>
+<li>国内直连 Google AI / Vertex 对个人不友好时，可用 tryallapi.com；估算 ≈ 官方价 × 分组倍率，以控制台为准。</li>
+</ol>
+<p>👉 <a href="https://tryallapi.com/" target="_blank" rel="noopener noreferrer">前往 tryallapi.com 注册并生成 API Key</a></p>
+<hr />
+<h2 id="一flash-和-pro-怎么分工">一、Flash 和 Pro 怎么分工？</h2>
+<p>实务上可以把 Gemini 3 Flash 当作：</p>
+<ul>
+<li><strong>高 QPS / 成本敏感</strong> 的默认模型（客服草稿、分类、轻量工具调用）；</li>
+<li><strong>多模态预处理</strong>：先吃图/PDF/短视频再交给更贵的 Pro；</li>
+<li><strong>带 thinking 的「聪明一点的快模型」</strong>：但记住 thinking 按输出计费。</li>
+</ul>
+<p>需要更强推理或更稳的生产 SLA 时，再切 Pro / 付费云通道。本文不引用无法复核的第三方延迟数字。</p>
+<hr />
+<h2 id="二国内为什么需要中转">二、国内为什么需要中转？</h2>
+<p><code>generativelanguage.googleapis.com</code> 在国内网络环境常不稳定；AI Studio 配额与风控、Vertex 的企业门槛，也对个人与小团队不友好。聚合平台提供国内可达入口与人民币支付，并把 Gemini 原生与 OpenAI 兼容两种协议放到同一套 Key 下。代价仍是数据经过第三方——密钥与敏感内容要分级。</p>
+<hr />
+<h2 id="三方案对比ai-studio--vertex--聚合">三、方案对比：AI Studio / Vertex / 聚合</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr class="header">
+<th>对比项</th>
+<th>Google AI Studio</th>
+<th>Vertex AI</th>
+<th>tryallapi.com</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>国内可达性</td>
+<td>网络与账号门槛高</td>
+<td>需 GCP 与网络</td>
+<td>国内入口</td>
+</tr>
+<tr class="even">
+<td>模型 ID</td>
+<td><code>gemini-3-flash-preview</code></td>
+<td>以 Vertex 目录为准</td>
+<td>同 Preview ID</td>
+</tr>
+<tr class="odd">
+<td>付款</td>
+<td>境外支付为主</td>
+<td>GCP 账单</td>
+<td>微信 / 支付宝等</td>
+</tr>
+<tr class="even">
+<td>协议</td>
+<td>Gemini 原生</td>
+<td>Vertex SDK</td>
+<td><strong>gemini + openai</strong></td>
+</tr>
+<tr class="odd">
+<td>适合</td>
+<td>原型、海外主体</td>
+<td>企业 GCP 体系</td>
+<td>个人/中小、多模型一 Key</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="四快速接入">四、快速接入</h2>
+<h3 id="1-环境变量">1. 环境变量</h3>
+<pre class="bash"><code>export TRYALLAPI_KEY=&quot;sk-xxxxxxxx&quot;</code></pre>
+<h3 id="2-pythonopenai-兼容最省事">2. Python（OpenAI 兼容，最省事）</h3>
+<pre class="python"><code># pip install -U openai
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;TRYALLAPI_KEY&quot;],
+    base_url=&quot;https://tryallapi.com/v1&quot;,
+    timeout=120.0,
+)
+r = client.chat.completions.create(
+    model=&quot;gemini-3-flash-preview&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;把这段需求改成验收清单&quot;}],
+)
+print(r.choices[0].message.content)</code></pre>
+<h3 id="3-nodejs">3. Node.js</h3>
+<pre class="javascript"><code>import OpenAI from &quot;openai&quot;;
+const client = new OpenAI({
+  apiKey: process.env.TRYALLAPI_KEY,
+  baseURL: &quot;https://tryallapi.com/v1&quot;,
+});
+const r = await client.chat.completions.create({
+  model: &quot;gemini-3-flash-preview&quot;,
+  messages: [{ role: &quot;user&quot;, content: &quot;ping&quot; }],
+});
+console.log(r.choices[0].message.content);</code></pre>
+<h3 id="4-curl">4. cURL</h3>
+<pre class="bash"><code>curl https://tryallapi.com/v1/chat/completions \
+  -H &quot;Authorization: Bearer $TRYALLAPI_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;model&quot;:&quot;gemini-3-flash-preview&quot;,&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;ping&quot;}]}&#39;</code></pre>
+<h3 id="5-cursor--dify--gemini-原生">5. Cursor / Dify / Gemini 原生</h3>
+<ul>
+<li>Cursor / Dify：Base URL <code>https://tryallapi.com/v1</code>，模型 <code>gemini-3-flash-preview</code>。</li>
+<li>若工具支持 Gemini 原生协议，可按 tryallapi 文档选 <code>gemini</code> 端点（路径与鉴权以站点说明为准），不要和 OpenAI 头混用。</li>
+</ul>
+<hr />
+<h2 id="五价格与分组倍率">五、价格与分组倍率</h2>
+<h3 id="官方价2026-10-02-核对">官方价（2026-10-02 核对）</h3>
+<div class="table-scroll"><table>
+<thead>
+<tr class="header">
+<th>项目</th>
+<th>每百万 tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>文本输入</td>
+<td>$0.50</td>
+</tr>
+<tr class="even">
+<td>音频输入</td>
+<td>$1.00</td>
+</tr>
+<tr class="odd">
+<td>输出（含 thinking）</td>
+<td>$3.00</td>
+</tr>
+<tr class="even">
+<td>文本缓存</td>
+<td>$0.05</td>
+</tr>
+<tr class="odd">
+<td>音频缓存</td>
+<td>$0.10</td>
+</tr>
+<tr class="even">
+<td>缓存存储</td>
+<td>$1.00 / MTok·小时</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="tryallapicom估算--官方价--分组倍率">tryallapi.com（估算 ≈ 官方价 × 分组倍率）</h3>
+<p><code>gemini-3-flash-preview</code>：<code>model_ratio=0.25</code>，<code>completion_ratio=6</code>，<code>cache_ratio=0.1</code>。分组（2026-10-02）：</p>
+<div class="table-scroll"><table>
+<thead>
+<tr class="header">
+<th>分组</th>
+<th>倍率</th>
+<th>文本输入估算</th>
+<th>输出估算</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Anti-Gemini-1 / Cli-Gemini-1</td>
+<td>0.14706</td>
+<td>≈ $0.07</td>
+<td>≈ $0.44</td>
+</tr>
+<tr class="even">
+<td>Aistudio-Gemini-1</td>
+<td>0.35294</td>
+<td>≈ $0.18</td>
+<td>≈ $1.06</td>
+</tr>
+<tr class="odd">
+<td>Vertex-Gemini-1</td>
+<td>0.4</td>
+<td>$0.20</td>
+<td>$1.20</td>
+</tr>
+<tr class="even">
+<td>Aistudio-Gemini-2</td>
+<td>0.52942</td>
+<td>≈ $0.26</td>
+<td>≈ $1.59</td>
+</tr>
+<tr class="odd">
+<td>Aistudio-Gemini-3</td>
+<td>0.88236</td>
+<td>≈ $0.44</td>
+<td>≈ $2.65</td>
+</tr>
+<tr class="even">
+<td>Vertex-Gemini-2</td>
+<td>0.9</td>
+<td>$0.45</td>
+<td>$2.70</td>
+</tr>
+<tr class="odd">
+<td>Vertex-Gemini-3</td>
+<td>1.8</td>
+<td>$0.90</td>
+<td>$5.40</td>
+</tr>
+<tr class="even">
+<td>Aistudio-Gemini-4</td>
+<td>1.91178</td>
+<td>≈ $0.96</td>
+<td>≈ $5.74</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>以控制台为准。</strong> 打开 thinking 后务必核对输出 token 是否含 reasoning；不要只按「可见回复长度」估成本。</p>
+<hr />
+<h2 id="六常见报错">六、常见报错</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr class="header">
+<th>报错</th>
+<th>原因</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>401</td>
+<td>Key 错误</td>
+<td>检查 Bearer 与令牌状态</td>
+</tr>
+<tr class="even">
+<td>403</td>
+<td>分组无此模型</td>
+<td>换 Aistudio / Vertex / Cli 等 Gemini 分组</td>
+</tr>
+<tr class="odd">
+<td>404</td>
+<td>ID 写错成 <code>gemini-3-flash</code>（少 preview）</td>
+<td>使用 <code>gemini-3-flash-preview</code></td>
+</tr>
+<tr class="even">
+<td>429</td>
+<td>限流</td>
+<td>退避、降并发、换分组</td>
+</tr>
+<tr class="odd">
+<td>账单偏高</td>
+<td>thinking 计入输出</td>
+<td>调低 thinking / 看 usage</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="七避坑">七、避坑</h2>
+<ol type="1">
+<li><strong>Preview ID 会变</strong>：配置做成环境变量，不要写死在多处。</li>
+<li><strong>Thinking = 输出成本</strong>：默认 HIGH/dynamic 时尤其容易超预算。</li>
+<li><strong>双协议别混</strong>：gemini 原生与 openai 兼容选一条链路配到底。</li>
+<li><strong>模态计费不同</strong>：音频输入单价高于文本，上传前先看官方价表。</li>
+<li><strong>无 Live / 生图</strong>：需要实时语音或图像生成请换对应模型，不要指望 Flash Preview「全能」。</li>
+</ol>
+<hr />
+<hr />
+<h2 id="preview-模型上生产前要准备什么">Preview 模型上生产前要准备什么</h2>
+<p><code>gemini-3-flash-preview</code> 名字里的 preview 不是装饰：模型 ID、默认 thinking、能力开关都可能随 Google 文档更新。上线清单建议至少包括：</p>
+<ol type="1">
+<li>模型名读环境变量，支持一键切到稳定档或 Pro；</li>
+<li>对 thinking 相关参数做显式配置，并在账单里核对「输出 tokens」是否含 reasoning；</li>
+<li>多模态输入按模态分别估价（音频输入单价高于文本）；</li>
+<li>不依赖尚未支持的能力（如 Live API、图像生成）。</li>
+</ol>
+<p>Flash 适合做高并发预处理：先分类、抽字段、生成草稿，再把难例路由到 Gemini Pro 或 Claude/GPT。这种「级联」比全程旗舰便宜，也比全程 Flash 更稳。</p>
+<hr />
+<h2 id="双端点怎么选">双端点怎么选</h2>
+<p>tryallapi 同时列出 <code>gemini</code> 与 <code>openai</code>。实务建议：</p>
+<ul>
+<li>已有 OpenAI SDK / Cursor / Dify 工作流 → 走 <code>https://tryallapi.com/v1</code>；</li>
+<li>必须用 Gemini 原生特性且工具只认 Google SDK → 按站点文档选 gemini 端点，并单独测鉴权头。</li>
+</ul>
+<p>不要在同一个客户端里混两种协议的 URL 与 Header。联调时先打一条最小 <code>ping</code>，确认模型 ID 带 <code>-preview</code> 后缀，再上多模态样例。</p>
+<hr />
+<h2 id="成本与分组">成本与分组</h2>
+<p>低倍率分组（如部分 Cli / Anti / Aistudio 档）适合冒烟与开发；生产流量要看稳定性与限额，而不是只看倍率表。打开 thinking 后，用同一提示开关对比 usage，把「可见回复很短但账单不低」写进团队 FAQ，避免误解为「中转多扣了」。本文价格与倍率快照于 2026-10-02，以控制台为准。</p>
+<p>把密钥放进密钥管理，按项目分令牌，并为 Flash 准备 Pro 降级路径。流量升到需要合同与专线时，再评估 Vertex 企业方案，而不是无限叠加低倍率分组。</p>
+<hr />
+<h2 id="多模态样例怎么稳健试">多模态样例怎么稳健试</h2>
+<p>第一次接 Flash 时，先纯文本跑通，再加单张图片，最后才上 PDF / 短视频 / 音频。原因很简单：不同模态的计费与大小限制不同，一步到位排障成本高。上传前压缩无意义的分辨率，能明显降低输入 tokens。Grounding、代码执行、computer use 等能力以 Google 文档与 tryallapi 实际放行为准——列表里有，不代表你的分组一定开了。</p>
+<p>和 Gemini 3.1 Pro 指南对照阅读时，注意两边的模型 ID、价表与分组完全不同，不要复制粘贴错文档。本文快照日期 2026-10-02。</p>
+<p>写在最后：Preview 模型名做成配置项；thinking 成本按输出 usage 核算；音频与文本输入分开估价。密钥分项目存放，并为 Flash 准备 Pro 或其他厂商降级。数字快照于 2026-10-02，之后以 Google 文档与 tryallapi 控制台为准。</p>
+<hr />
+<h2 id="常见选型问答补充">常见选型问答补充</h2>
+<p>若你的产品同时需要「快」与「稳」，可以用 Flash 做第一跳：超时或低置信再打 Pro。置信度可以来自模型自评分，也可以来自规则（字数、是否包含必填字段）。这种级联在客服、工单、内容审核里很常见。记得在监控里分开统计两跳的 QPS 与费用，否则很难证明 Flash 真的省钱。</p>
+<p>对于教育、媒体类批量图文任务，先确认版权与隐私政策是否允许把原图送进第三方聚合；不允许就直连 Vertex 或本地预处理。tryallapi.com 适合工程整合，不是合规豁免。把这些约束写进接入评审表，比事后追责便宜得多。数字与分组仍以 2026-10-02 快照之后的控制台为准。</p>
+<h2 id="八faq">八、FAQ</h2>
+<p><strong>Q1：模型 ID？</strong><br />
+<code>gemini-3-flash-preview</code>（Preview）。</p>
+<p><strong>Q2：官方价？</strong><br />
+文本输入 $0.50、输出 $3（含 thinking）、文本缓存 $0.05 等，以 Google AI Pricing 为准。</p>
+<p><strong>Q3：国内能直连 Google Gemini 吗？</strong><br />
+个人与中小团队常不稳定；可用 Vertex（有门槛）或聚合平台。</p>
+<p><strong>Q4：thinking 怎么计费？</strong><br />
+官方说明输出价包含 thinking tokens；以控制台 usage 为准。</p>
+<p><strong>Q5：tryallapi 支持哪些端点？</strong><br />
+<code>gemini</code> 与 <code>openai</code> 均列出；日常工具优先 OpenAI 兼容更省事。</p>
+<p><strong>Q6：和 Gemini 3.1 Pro 怎么选？</strong><br />
+Flash 偏成本与速度；Pro 偏更难任务。按评测集与预算切换。</p>
+<p><strong>Q7：Cursor 怎么配？</strong><br />
+Base URL <code>https://tryallapi.com/v1</code>，模型 <code>gemini-3-flash-preview</code>。</p>
+<p><strong>Q8：一个 Key 能兼用 GPT 吗？</strong><br />
+可以，权限内多模型通用。</p>
+<hr />
+<h2 id="相关阅读">相关阅读</h2>
+<ul>
+<li><p><a href="https://maynor996.github.io/gemini-2.5-pro-api/" target="_blank" rel="noopener noreferrer">Gemini 2.5 Pro API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/gpt-6.1-sol-api/" target="_blank" rel="noopener noreferrer">GPT-6.1 Sol API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/gpt-6-astra-api/" target="_blank" rel="noopener noreferrer">GPT-6 Astra API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/claude-opus-5-5-api/" target="_blank" rel="noopener noreferrer">Claude Opus 5.5 API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/gemini-3.1-pro-api/" target="_blank" rel="noopener noreferrer">Gemini 3.1 Pro API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/deepseek-v3.2-api/" target="_blank" rel="noopener noreferrer">DeepSeek V3.2 API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/grok-4.7-api/" target="_blank" rel="noopener noreferrer">Grok 4.7 API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/claude-sonnet-4-6-api/" target="_blank" rel="noopener noreferrer">Claude Sonnet 4.6 API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/gpt-5.4-api/" target="_blank" rel="noopener noreferrer">GPT-5.4 API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/gemini-3-flash-api/" target="_blank" rel="noopener noreferrer">Gemini 3 Flash API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/qwen3.8-max-api/" target="_blank" rel="noopener noreferrer">Qwen3.8 Max API 国内中转调用指南</a></p></li>
+<li><p><a href="https://maynor996.github.io/kimi-k3-api/" target="_blank" rel="noopener noreferrer">Kimi K3 API 国内中转调用指南</a></p></li>
+<li><p><a href="https://tryallapi.com/pricing" target="_blank" rel="noopener noreferrer">tryallapi.com 模型价格总览</a></p></li>
+<li><p>官方参考：<a href="https://ai.google.dev/gemini-api/docs/models/gemini-3-flash-preview" target="_blank" rel="noopener noreferrer">gemini-3-flash-preview</a> · <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener noreferrer">Gemini Pricing</a></p></li>
+</ul>
+<hr />
+<p><strong>其他使用方式，按需选择：</strong></p>
+<div class="table-scroll"><table>
+<thead>
+<tr class="header">
+<th>渠道类型</th>
+<th>访问网址</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>全模型 API 聚合站</td>
+<td><a href="https://tryallapi.com/" target="_blank" rel="noopener noreferrer">https://tryallapi.com/</a></td>
+<td>适合开发者调用、低延迟直连、多模型一站式接入</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<p><em>作者：MaynorAI，tryallapi.com 运营者，关注国内开发者接入海外大模型的实践问题。</em> <em>首发：2026-10-02｜最后更新：2026-10-02｜更新日志：2026-10-02 首版（价格与倍率取自官方文档与 tryallapi.com 公开接口，取数时间 2026-10-02，最终以控制台为准）。</em> <em>免责声明：文中价格、倍率与政策可能随厂商及平台调整而变化，请以官方页面和 tryallapi.com 控制台为准。第三方中转服务不是模型厂商官方服务。</em></p>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>MaynorAI · Gemini 3 Flash API 国内调用指南</span>
+      <a href="https://github.com/Maynor996/gemini-3-flash-api" target="_blank" rel="noopener noreferrer">在 GitHub 查看源码 / Star</a>
+    </div>
+  </footer>
+</body>
+</html>
